@@ -471,8 +471,7 @@
                 name: "BARBIE PINK KHALEJI",
                 price: 5299,
                 fabric: "Imported Organza",
-                image: "
-                assets/Images/beautiful😍.jfif",
+                image: "assets/Images/beautiful😍.jfif",
                 category: "Pastel"
             },
             {
@@ -497,7 +496,7 @@
                 card.className = 'product-card bg-white/5 rounded-3xl overflow-hidden'
                 card.innerHTML = `
                     <div class="relative">
-                        <img src="${assets/Images/download (37).jfif}" alt="${product.name}" class="w-full aspect-[4/5] object-cover">
+                        <img src="${product.image}" alt="${product.name}" class="w-full aspect-[4/5] object-cover">
                         <div class="absolute top-4 right-4 bg-black/70 text-xs px-3 py-1 rounded-2xl">${product.category}</div>
                     </div>
                     <div class="p-5">
@@ -515,7 +514,7 @@
                 `
                 grid.appendChild(card)
             })
-            
+
             if (filteredProducts.length === 0) {
                 grid.innerHTML = `<div class="col-span-full text-center py-20 text-gray-400">No products found</div>`
             }
