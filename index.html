@@ -514,7 +514,7 @@
                 `
                 grid.appendChild(card)
             })
-
+            
             if (filteredProducts.length === 0) {
                 grid.innerHTML = `<div class="col-span-full text-center py-20 text-gray-400">No products found</div>`
             }
@@ -562,7 +562,7 @@
                 const div = document.createElement('div')
                 div.className = 'flex gap-4'
                 div.innerHTML = `
-                    <img src="${assets/Images/download (38).jfif}" class="w-20 h-20 object-cover rounded-2xl">
+                    <img src="${item.image}" class="w-20 h-20 object-cover rounded-2xl">
                     <div class="flex-1">
                         <div class="flex justify-between">
                             <div class="font-medium">${item.name}</div>
