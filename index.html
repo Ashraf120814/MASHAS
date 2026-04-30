@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,740 +8,965 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@400;500;600&display=swap');
-        
-        :root {
+
+        /* ─── THEME VARIABLES ─── */
+        :root[data-theme="dark"] {
+            --bg: #000000;
+            --bg2: rgba(255,255,255,0.05);
+            --bg3: rgba(255,255,255,0.1);
+            --text: #ffffff;
+            --text2: #d1d5db;
+            --border: rgba(255,255,255,0.1);
+            --border2: rgba(255,255,255,0.3);
+            --card-bg: rgba(255,255,255,0.05);
+            --input-bg: rgba(255,255,255,0.1);
+            --header-bg: #000000;
             --gold: #d4af77;
+            --overlay: rgba(0,0,0,0.7);
         }
-        
-        * {
-            transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
-            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-            transition-duration: 150ms;
+        :root[data-theme="light"] {
+            --bg: #faf8f5;
+            --bg2: rgba(0,0,0,0.04);
+            --bg3: rgba(0,0,0,0.08);
+            --text: #1a1a1a;
+            --text2: #4b5563;
+            --border: rgba(0,0,0,0.1);
+            --border2: rgba(0,0,0,0.25);
+            --card-bg: #ffffff;
+            --input-bg: rgba(0,0,0,0.06);
+            --header-bg: #ffffff;
+            --gold: #b8860b;
+            --overlay: rgba(0,0,0,0.5);
         }
-        
-        body {
-            font-family: 'Inter', system_ui, sans-serif;
+
+        * { transition: background-color 0.35s ease, color 0.35s ease, border-color 0.35s ease; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); }
+        .heading-font { font-family: 'Playfair Display', serif; }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            width: 52px; height: 28px;
+            background: var(--bg3);
+            border-radius: 50px;
+            border: 1.5px solid var(--border2);
+            position: relative; cursor: pointer;
+            display: flex; align-items: center; padding: 2px;
+            transition: background 0.3s;
         }
-        
-        .heading-font {
-            font-family: 'Playfair Display', sans-serif;
+        .theme-toggle-thumb {
+            width: 22px; height: 22px;
+            border-radius: 50%;
+            background: var(--gold);
+            transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 11px;
         }
-        .logo.png{
-            height: 140px;
-            width: 140 px;
+        [data-theme="light"] .theme-toggle-thumb { transform: translateX(24px); }
+
+        /* Nav */
+        header { background: var(--header-bg); border-bottom: 1px solid var(--border); }
+        .nav-link { position: relative; color: var(--text); text-decoration: none; }
+        .nav-link:after { content:''; position:absolute; width:0; height:2px; bottom:-2px; left:0; background:var(--gold); transition: width 0.3s; }
+        .nav-link:hover:after { width: 100%; }
+
+        /* Cards */
+        .product-card { background: var(--card-bg); border-radius: 1.5rem; overflow: hidden; transition: all 0.3s cubic-bezier(0.4,0,0.2,1); border: 1px solid var(--border); }
+        .product-card:hover { transform: translateY(-6px); box-shadow: 0 24px 40px rgba(0,0,0,0.18); }
+
+        /* Cart */
+        .cart-slide { animation: slideIn 0.3s ease-out forwards; }
+        @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+
+        /* WhatsApp Float */
+        .wa-float {
+            position: fixed; bottom: 90px; right: 24px; z-index: 9998;
+            width: 56px; height: 56px; border-radius: 50%;
+            background: #25d366;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 26px; color: white; cursor: pointer;
+            box-shadow: 0 4px 20px rgba(37,211,102,0.5);
+            transition: transform 0.2s, box-shadow 0.2s;
         }
-       
-        
-        .product-card {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        .wa-float:hover { transform: scale(1.12); box-shadow: 0 8px 28px rgba(37,211,102,0.6); }
+
+        /* AI Bot */
+        .bot-float {
+            position: fixed; bottom: 24px; right: 24px; z-index: 9998;
+            width: 56px; height: 56px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--gold), #a67c52);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 22px; color: white; cursor: pointer;
+            box-shadow: 0 4px 20px rgba(212,175,119,0.5);
+            transition: transform 0.2s;
         }
-        
-        .product-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        .bot-float:hover { transform: scale(1.12); }
+        .bot-pulse { animation: pulse 2s infinite; }
+        @keyframes pulse { 0%,100%{box-shadow:0 4px 20px rgba(212,175,119,0.5)} 50%{box-shadow:0 4px 30px rgba(212,175,119,0.9)} }
+
+        /* Chat Window */
+        .chat-window {
+            position: fixed; bottom: 92px; right: 24px; z-index: 9999;
+            width: 360px; max-height: 520px;
+            background: var(--header-bg); border: 1px solid var(--border);
+            border-radius: 24px; display: flex; flex-direction: column;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
         }
-        
-        .nav-link {
-            position: relative;
+        .chat-header { background: linear-gradient(135deg, var(--gold), #a67c52); padding: 16px 20px; color: white; }
+        .chat-messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+        .chat-msg { max-width: 80%; padding: 10px 14px; border-radius: 16px; font-size: 13.5px; line-height: 1.5; }
+        .chat-msg.bot { background: var(--bg2); color: var(--text); border-bottom-left-radius: 4px; }
+        .chat-msg.user { background: var(--gold); color: #000; align-self: flex-end; border-bottom-right-radius: 4px; }
+        .chat-msg.typing { display: flex; gap: 4px; align-items: center; padding: 14px; }
+        .dot { width: 7px; height: 7px; background: var(--text2); border-radius: 50%; animation: bounce 1.2s infinite; }
+        .dot:nth-child(2){animation-delay:0.2s} .dot:nth-child(3){animation-delay:0.4s}
+        @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
+        .chat-input-row { padding: 12px 16px; border-top: 1px solid var(--border); display: flex; gap: 8px; }
+        .chat-input { flex:1; background:var(--input-bg); border:1px solid var(--border); border-radius:999px; padding:10px 16px; font-size:13px; color:var(--text); outline:none; }
+        .chat-send { width:36px; height:36px; border-radius:50%; background:var(--gold); color:#000; border:none; cursor:pointer; font-size:14px; display:flex;align-items:center;justify-content:center; }
+        .quick-replies { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 16px 12px; }
+        .qr-btn { padding: 6px 12px; border-radius: 999px; font-size: 12px; border: 1px solid var(--gold); color: var(--gold); background: transparent; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+        .qr-btn:hover { background: var(--gold); color: #000; }
+
+        /* Scrollbar */
+        .chat-messages::-webkit-scrollbar { width: 4px; }
+        .chat-messages::-webkit-scrollbar-track { background: transparent; }
+        .chat-messages::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
+
+        /* Sections bg adaptation */
+        #collections-section { background: var(--bg2); }
+        select, input { background: var(--input-bg); color: var(--text); border-color: var(--border2); }
+        select option { background: var(--header-bg); }
+
+        /* Modal overlays */
+        .modal-bg { background: var(--overlay) !important; }
+
+        /* Payment methods */
+        .payment-option { border: 1.5px solid var(--border2); background: var(--bg2); border-radius: 1rem; padding: 1rem; text-align: center; cursor: pointer; transition: all 0.2s; color: var(--text); }
+        .payment-option.selected { border-color: var(--gold) !important; }
+
+        /* About card */
+        .about-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 1.5rem; padding: 2rem; }
+
+        /* Footer */
+        footer { background: var(--header-bg); border-top: 1px solid var(--border); }
+
+        /* Razorpay-like payment UI */
+        .payment-ui { background: var(--card-bg); border: 1px solid var(--border); border-radius: 1rem; padding: 1rem; }
+        .upi-input { background: var(--input-bg); border: 1px solid var(--border2); border-radius: 0.75rem; padding: 0.75rem 1rem; color: var(--text); width: 100%; outline: none; font-size: 14px; }
+
+        @media (max-width: 640px) {
+            .chat-window { width: calc(100vw - 20px); right: 10px; }
         }
-        
-        .nav-link:after {
-            content: '';
-            position: absolute;
-            width: 0;
-            height: 2px;
-            bottom: -2px;
-            left: 0;
-            background-color: #d4af77;
-        }
-        
-        .nav-link:hover:after {
-            width: 100%;
-        }
-        
-        .cart-slide {
-            animation: slideIn 0.3s ease-out forwards;
-        }
-        
-        @keyframes slideIn {
-            from { transform: translateX(100%); }
-            to { transform: translateX(0); }
-        }
+
+        /* Notification toast */
+        .toast { position: fixed; top: 80px; right: 20px; z-index: 99999; background: #22c55e; color: white; padding: 12px 20px; border-radius: 12px; font-size: 14px; font-weight: 500; transform: translateX(200%); transition: transform 0.4s cubic-bezier(0.4,0,0.2,1); box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
+        .toast.show { transform: translateX(0); }
+        .toast.error { background: #ef4444; }
+        .toast.info { background: var(--gold); color: #000; }
+
+        /* Spin loader */
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .spinner { border: 3px solid rgba(255,255,255,0.2); border-top-color: #fff; border-radius: 50%; width: 20px; height: 20px; animation: spin 0.7s linear infinite; display: inline-block; }
+
+        /* Section scroll margin */
+        section { scroll-margin-top: 80px; }
     </style>
 </head>
-<body class="bg-black text-white">
-    <!-- HEADER -->
-    <header class="sticky top-0 z-50 bg-black border-b border-white/10">
-        <div class="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
-            <!-- Logo -->
-            <div class="flex items-center gap-3">
-                <img id="logo" src="assets/Images/Logo.jpeg" 
-                 alt="MASHAS Luxury Abayas" class="h-12 logo.png">
-                <div>
-                    <span class="text-3xl heading-font tracking-widest">MASHAS</span>
+<body>
+
+<!-- ─── TOAST ─── -->
+<div id="toast" class="toast"></div>
+
+<!-- ─── HEADER ─── -->
+<header class="sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 md:px-6 py-4 flex items-center justify-between gap-4">
+        <div class="flex items-center gap-3 flex-shrink-0">
+            <img src="assets/Images/Logo.jpeg" alt="MASHAS" class="h-10 rounded-lg" onerror="this.style.display='none'">
+            <span class="text-2xl md:text-3xl heading-font tracking-widest" style="color:var(--text)">MASHAS</span>
+        </div>
+
+        <nav class="hidden md:flex items-center gap-7 text-sm font-medium">
+            <a href="#" onclick="navigateToSection('home')" class="nav-link">HOME</a>
+            <a href="#" onclick="navigateToSection('shop')" class="nav-link">SHOP</a>
+            <a href="#" onclick="navigateToSection('collections')" class="nav-link">COLLECTIONS</a>
+            <a href="#" onclick="navigateToSection('about')" class="nav-link">OUR STORY</a>
+        </nav>
+
+        <div class="flex items-center gap-4 md:gap-5">
+            <!-- Theme Toggle -->
+            <div title="Toggle Theme" onclick="toggleTheme()" class="theme-toggle">
+                <div class="theme-toggle-thumb">
+                    <span id="theme-icon">🌙</span>
                 </div>
             </div>
 
-            <!-- Navigation -->
-            <nav class="hidden md:flex items-center gap-8 text-sm font-medium">
-                <a href="#" onclick="navigateToSection('home')" class="nav-link">HOME</a>
-                <a href="#" onclick="navigateToSection('shop')" class="nav-link">SHOP LUXURY ABAYAS</a>
-                <a href="#" onclick="navigateToSection('collections')" class="nav-link">COLLECTIONS</a>
-                <a href="#" onclick="navigateToSection('about')" class="nav-link">OUR STORY</a>
-            </nav>
+            <!-- Search -->
+            <i class="fa-solid fa-magnifying-glass text-lg cursor-pointer hidden md:block" onclick="toggleSearch()" style="color:var(--text)"></i>
 
-            <div class="flex items-center gap-6">
-                <!-- Search -->
-                <div onclick="toggleSearch()" class="cursor-pointer">
-                    <i class="fa-solid fa-magnifying-glass text-xl"></i>
+            <!-- Account -->
+            <div class="hidden md:flex items-center gap-2 cursor-pointer">
+                <i class="fa-solid fa-user" style="color:var(--text)"></i>
+                <span class="text-sm" style="color:var(--text)">Sana & Ashraf</span>
+            </div>
+
+            <!-- WhatsApp Quick -->
+            <a href="https://wa.me/919696749507?text=Hi%20MASHAS!%20I%20want%20to%20inquire%20about%20your%20luxury%20abayas." 
+               target="_blank" title="Chat on WhatsApp"
+               class="hidden md:flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold" 
+               style="background:#25d366;color:white">
+                <i class="fa-brands fa-whatsapp text-base"></i> WhatsApp
+            </a>
+
+            <!-- Cart -->
+            <div onclick="toggleCart()" class="relative cursor-pointer">
+                <i class="fa-solid fa-shopping-bag text-xl" style="color:var(--text)"></i>
+                <span id="cart-count" class="absolute -top-1 -right-1 text-black text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center" style="background:var(--gold)">0</span>
+            </div>
+
+            <!-- Mobile menu -->
+            <button onclick="toggleMobileMenu()" class="md:hidden text-xl" style="color:var(--text)">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden md:hidden px-6 py-4" style="border-top:1px solid var(--border);background:var(--header-bg)">
+        <a href="#" onclick="navigateToSection('home');toggleMobileMenu()" class="nav-link block py-3">Home</a>
+        <a href="#" onclick="navigateToSection('shop');toggleMobileMenu()" class="nav-link block py-3">Shop</a>
+        <a href="#" onclick="navigateToSection('collections');toggleMobileMenu()" class="nav-link block py-3">Collections</a>
+        <a href="#" onclick="navigateToSection('about');toggleMobileMenu()" class="nav-link block py-3">Our Story</a>
+        <a href="https://wa.me/919696749507?text=Hi%20MASHAS!%20I%20want%20to%20inquire%20about%20your%20luxury%20abayas." target="_blank"
+           class="block mt-3 py-3 px-4 rounded-2xl text-center font-semibold" style="background:#25d366;color:white">
+            <i class="fa-brands fa-whatsapp"></i> Chat on WhatsApp
+        </a>
+    </div>
+</header>
+
+<!-- ─── HERO ─── -->
+<section id="home" class="relative h-screen flex items-center justify-center overflow-hidden">
+    <div class="absolute inset-0 z-10" style="background:linear-gradient(to bottom, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.85) 100%)"></div>
+    <img src="assets/Images/Premium Mocha Olive Open Abaya.jfif" alt="Luxury Abaya" class="absolute inset-0 w-full h-full object-cover" onerror="this.style.background='#111'">
+    <div class="relative z-20 text-center max-w-2xl px-6" style="color:white">
+        <div class="inline-flex items-center gap-2 px-6 py-2 rounded-full text-sm mb-6" style="background:rgba(255,255,255,0.12);backdrop-filter:blur(12px)">
+            <span class="w-2 h-2 rounded-full animate-pulse" style="background:var(--gold)"></span>
+            NEW ARRIVALS • LUXURY COLLECTION 2026
+        </div>
+        <h1 class="text-5xl md:text-7xl heading-font leading-none mb-6">MASHAS<br>LUXURY ABAYAS</h1>
+        <p class="text-xl md:text-2xl mb-8" style="color:#fde68a">Timeless elegance crafted for the modern woman</p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <button onclick="navigateToSection('shop')" class="px-10 py-4 rounded-full text-lg font-semibold flex items-center gap-3 justify-center" style="background:white;color:black">
+                SHOP NOW <i class="fa-solid fa-arrow-right"></i>
+            </button>
+            <a href="https://wa.me/919696749507?text=Hi%20MASHAS!%20I%27d%20love%20to%20know%20more%20about%20your%20collection." target="_blank"
+               class="px-10 py-4 rounded-full text-lg font-semibold flex items-center gap-3 justify-center" style="background:#25d366;color:white">
+                <i class="fa-brands fa-whatsapp"></i> WhatsApp Us
+            </a>
+        </div>
+        <div class="mt-12 text-xs tracking-[2px] flex justify-center gap-8" style="color:rgba(255,255,255,0.7)">
+            <div>123+ STYLES</div><div>PREMIUM FABRICS</div><div>FREE SHIPPING ₹5000+</div>
+        </div>
+    </div>
+    <div class="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center text-xs tracking-widest z-20" style="color:white">
+        SCROLL TO EXPLORE <i class="fa-solid fa-chevron-down mt-2 animate-bounce"></i>
+    </div>
+</section>
+
+<!-- ─── SHOP ─── -->
+<section id="shop" class="max-w-7xl mx-auto px-4 md:px-6 py-16">
+    <div class="flex flex-col md:flex-row justify-between items-end mb-10 gap-6">
+        <div>
+            <h2 class="text-4xl md:text-5xl heading-font" style="color:var(--text)">Luxury Abayas Collection</h2>
+            <p style="color:var(--gold)">Handcrafted elegance • 123 exquisite pieces</p>
+        </div>
+        <div class="flex items-center gap-4">
+            <select id="sort-select" onchange="sortProducts()" class="px-5 py-3 rounded-2xl text-sm focus:outline-none" style="border:1px solid var(--border2)">
+                <option value="default">Sort: Featured</option>
+                <option value="price-low">Price: Low to High</option>
+                <option value="price-high">Price: High to Low</option>
+                <option value="name">Name A-Z</option>
+            </select>
+        </div>
+    </div>
+    <div id="product-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
+</section>
+
+<!-- ─── COLLECTIONS ─── -->
+<section id="collections" id="collections-section" class="py-16" style="background:var(--bg2)">
+    <div class="max-w-7xl mx-auto px-4 md:px-6">
+        <h2 class="text-4xl heading-font text-center mb-12" style="color:var(--text)">Our Exclusive Collections</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div class="group cursor-pointer">
+                <div class="aspect-square rounded-3xl overflow-hidden mb-4" style="background:linear-gradient(135deg,#3d2814,#000)">
+                    <img src="assets/Images/abaya1.jpeg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                 </div>
-                
-                <!-- Account -->
-                <div class="flex items-center gap-2 cursor-pointer">
-                    <i class="fa-solid fa-user text-xl"></i>
-                    <span class="text-sm hidden md:block">Sana & Ashraf</span>
+                <p class="text-center text-lg" style="color:var(--text)">Signature Black Series</p>
+            </div>
+            <div class="group cursor-pointer">
+                <div class="aspect-square rounded-3xl overflow-hidden mb-4" style="background:linear-gradient(135deg,#4a1a2e,#000)">
+                    <img src="assets/Images/abaya2.jpeg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                 </div>
-                
-                <!-- Cart -->
-                <div onclick="toggleCart()" class="relative cursor-pointer">
-                    <i class="fa-solid fa-shopping-bag text-2xl"></i>
-                    <span id="cart-count" class="absolute -top-1 -right-1 bg-amber-400 text-black text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">0</span>
+                <p class="text-center text-lg" style="color:var(--text)">Pastel Elegance</p>
+            </div>
+            <div class="group cursor-pointer">
+                <div class="aspect-square rounded-3xl overflow-hidden mb-4" style="background:linear-gradient(135deg,#0d3d2a,#000)">
+                    <img src="assets/Images/abaya3.jpeg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                 </div>
-                
-                <!-- Mobile menu -->
-                <button onclick="toggleMobileMenu()" class="md:hidden text-2xl">
-                    <i class="fa-solid fa-bars"></i>
+                <p class="text-center text-lg" style="color:var(--text)">Emerald Luxe</p>
+            </div>
+            <div class="group cursor-pointer">
+                <div class="aspect-square rounded-3xl overflow-hidden mb-4" style="background:linear-gradient(135deg,#3d2814,#000)">
+                    <img src="assets/Images/beautiful.jpeg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                </div>
+                <p class="text-center text-lg" style="color:var(--text)">Beige Opulence</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ─── ABOUT ─── -->
+<section id="about" class="max-w-7xl mx-auto px-4 md:px-6 py-20">
+    <div class="grid md:grid-cols-2 gap-16 items-center">
+        <div>
+            <span class="text-sm tracking-[3px]" style="color:var(--gold)">FOUNDER'S VISION</span>
+            <h2 class="text-4xl md:text-5xl heading-font leading-tight mt-3" style="color:var(--text)">Crafted with love by<br>Sana & Ashraf</h2>
+            <p class="mt-8 text-lg leading-relaxed" style="color:var(--text2)">MASHAS was born from a passion for timeless modesty and modern luxury. Sana & Ashraf personally curates every piece to celebrate the grace and strength of every woman.</p>
+            <div class="mt-10 flex items-center gap-8">
+                <div>
+                    <div class="text-3xl font-semibold" style="color:var(--text)">Sana & Ashraf</div>
+                    <div class="text-sm" style="color:var(--gold)">Owner & Founder</div>
+                </div>
+            </div>
+            <a href="https://wa.me/919696749507?text=Hi%20Sana%20%26%20Ashraf!%20I%20found%20MASHAS%20and%20would%20love%20to%20learn%20more." target="_blank"
+               class="inline-flex items-center gap-2 mt-8 px-6 py-3 rounded-2xl font-semibold text-sm" style="background:#25d366;color:white">
+                <i class="fa-brands fa-whatsapp text-lg"></i> Connect with Us on WhatsApp
+            </a>
+            <p class="mt-8 text-xs" style="color:var(--text2)">Developed with ❤️ by Stark</p>
+        </div>
+        <div class="about-card">
+            <p class="italic text-lg" style="color:var(--text)">"MASHAS is more than clothing — it's a movement of quiet luxury and confidence."</p>
+            <div class="flex items-center gap-4 mt-10">
+                <div class="w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-black" style="background:var(--gold)">SA</div>
+                <div>
+                    <div style="color:var(--text)">Sana & Ashraf</div>
+                    <div class="text-sm" style="color:var(--gold)">MASHAS • Lucknow</div>
+                </div>
+            </div>
+            <div class="mt-8 pt-6" style="border-top:1px solid var(--border)">
+                <p class="text-sm font-medium mb-3" style="color:var(--text)">📞 Reach Us Directly</p>
+                <div class="flex flex-col gap-2 text-sm" style="color:var(--text2)">
+                    <a href="tel:+919696749507" class="flex items-center gap-2"><i class="fa-solid fa-phone" style="color:var(--gold)"></i>+91 9696749507</a>
+                    <a href="mailto:mashas@gmail.com" class="flex items-center gap-2"><i class="fa-solid fa-envelope" style="color:var(--gold)"></i>mashas@gmail.com</a>
+                    <span class="flex items-center gap-2"><i class="fa-solid fa-location-dot" style="color:var(--gold)"></i>Lucknow, Uttar Pradesh</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ─── FOOTER ─── -->
+<footer class="py-12">
+    <div class="max-w-7xl mx-auto px-4 md:px-6 grid md:grid-cols-4 gap-8 text-sm">
+        <div>
+            <img src="assets/Images/Logo.jpeg" alt="MASHAS" class="h-10 mb-4 rounded-lg" onerror="this.style.display='none'">
+            <p style="color:var(--text2)">Luxury Abayas • Timeless Modesty</p>
+            <p class="text-xs mt-6" style="color:var(--text2)">© 2026 MASHAS • All Rights Reserved</p>
+            <p class="text-xs" style="color:var(--gold)">Owner & Founder: Sana & Ashraf</p>
+            <p class="text-xs" style="color:var(--text2)">Developed by Stark</p>
+        </div>
+        <div>
+            <div class="font-medium mb-4" style="color:var(--text)">SHOP</div>
+            <ul class="space-y-3" style="color:var(--text2)">
+                <li class="cursor-pointer hover:opacity-80" onclick="navigateToSection('shop')">Luxury Abayas</li>
+                <li>New Arrivals</li><li>Best Sellers</li><li>Sale</li>
+            </ul>
+        </div>
+        <div>
+            <div class="font-medium mb-4" style="color:var(--text)">SUPPORT</div>
+            <ul class="space-y-3" style="color:var(--text2)">
+                <li>Shipping Policy</li><li>Returns</li>
+                <li><a href="tel:+919696749507">Contact Us</a></li><li>Track Order</li>
+            </ul>
+        </div>
+        <div>
+            <div class="font-medium mb-4" style="color:var(--text)">CONNECT</div>
+            <div class="flex gap-5 text-2xl">
+                <i class="fa-brands fa-instagram cursor-pointer" style="color:var(--text)"></i>
+                <a href="https://wa.me/919696749507" target="_blank"><i class="fa-brands fa-whatsapp" style="color:#25d366"></i></a>
+                <i class="fa-brands fa-facebook cursor-pointer" style="color:var(--text)"></i>
+            </div>
+            <p class="mt-8 text-xs" style="color:var(--text2)">Lucknow, Uttar Pradesh, India</p>
+            <p class="text-xs" style="color:var(--text2)">+91 9696749507 • mashas@gmail.com</p>
+        </div>
+    </div>
+</footer>
+
+<!-- ─── CART PANEL ─── -->
+<div onclick="if(event.target===this)toggleCart()" id="cart-overlay" class="hidden fixed inset-0 z-[9999]" style="background:var(--overlay)"></div>
+<div id="cart-panel" class="hidden fixed top-0 bottom-0 right-0 w-full md:w-96 z-[10000] flex flex-col cart-slide" style="background:var(--header-bg);border-left:1px solid var(--border)">
+    <div class="p-6 flex items-center justify-between" style="border-bottom:1px solid var(--border)">
+        <h3 class="text-2xl heading-font" style="color:var(--text)">Your Cart</h3>
+        <i onclick="toggleCart()" class="fa-solid fa-xmark text-2xl cursor-pointer" style="color:var(--text)"></i>
+    </div>
+    <div id="cart-items" class="flex-1 overflow-auto p-6 space-y-6"></div>
+    <div class="p-6" style="border-top:1px solid var(--border)">
+        <div class="flex justify-between text-lg mb-2">
+            <span style="color:var(--text)">Subtotal</span>
+            <span id="cart-subtotal" class="font-semibold" style="color:var(--text)">₹0</span>
+        </div>
+        <div class="text-xs mb-4" style="color:var(--text2)">Shipping calculated at checkout • Free over ₹5000</div>
+        <button onclick="goToCheckout()" class="w-full py-4 rounded-2xl font-semibold text-lg flex items-center justify-center gap-2" style="background:var(--gold);color:#000">
+            PROCEED TO CHECKOUT <i class="fa-solid fa-arrow-right"></i>
+        </button>
+        <button onclick="toggleCart()" class="w-full mt-4 text-sm" style="color:var(--text2)">Continue Shopping</button>
+    </div>
+</div>
+
+<!-- ─── CHECKOUT MODAL ─── -->
+<div onclick="if(event.target.id==='checkout-modal')hideCheckout()" id="checkout-modal" class="hidden fixed inset-0 z-[11000] flex items-center justify-center p-4" style="background:rgba(0,0,0,0.92)">
+    <div onclick="event.stopPropagation()" class="max-w-2xl w-full rounded-3xl max-h-[90vh] overflow-auto" style="background:var(--header-bg);border:1px solid var(--border)">
+        <div class="p-6 md:p-8">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-3xl heading-font" style="color:var(--text)">Checkout</h2>
+                <i onclick="hideCheckout()" class="fa-solid fa-xmark text-2xl cursor-pointer" style="color:var(--text)"></i>
+            </div>
+            <div class="grid md:grid-cols-5 gap-8">
+                <div class="md:col-span-2">
+                    <h4 class="font-medium mb-4" style="color:var(--text)">Order Summary</h4>
+                    <div id="checkout-summary" class="space-y-3 mb-6"></div>
+                    <div class="flex justify-between text-xl pt-4" style="border-top:1px solid var(--border)">
+                        <span style="color:var(--text)">Total</span>
+                        <span id="checkout-total" class="font-semibold" style="color:var(--gold)">₹0</span>
+                    </div>
+                </div>
+                <div class="md:col-span-3 space-y-5">
+                    <div>
+                        <label class="block text-sm mb-2" style="color:var(--text2)">Full Name</label>
+                        <input id="name" type="text" placeholder="Your full name" class="w-full rounded-2xl px-5 py-3.5 focus:outline-none text-sm" style="background:var(--input-bg);border:1px solid var(--border2);color:var(--text)">
+                    </div>
+                    <div>
+                        <label class="block text-sm mb-2" style="color:var(--text2)">Shipping Address</label>
+                        <input id="address" type="text" placeholder="Full delivery address" class="w-full rounded-2xl px-5 py-3.5 focus:outline-none text-sm" style="background:var(--input-bg);border:1px solid var(--border2);color:var(--text)">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm mb-2" style="color:var(--text2)">Email</label>
+                            <input id="email" type="email" placeholder="you@email.com" class="w-full rounded-2xl px-5 py-3.5 focus:outline-none text-sm" style="background:var(--input-bg);border:1px solid var(--border2);color:var(--text)">
+                        </div>
+                        <div>
+                            <label class="block text-sm mb-2" style="color:var(--text2)">Phone</label>
+                            <input id="phone" type="tel" placeholder="+91 XXXXX XXXXX" class="w-full rounded-2xl px-5 py-3.5 focus:outline-none text-sm" style="background:var(--input-bg);border:1px solid var(--border2);color:var(--text)">
+                        </div>
+                    </div>
+
+                    <!-- Payment Method -->
+                    <div>
+                        <label class="block text-sm mb-3 font-medium" style="color:var(--text)">Payment Method</label>
+                        <div class="flex gap-3 mb-4">
+                            <div onclick="selectPayment(this,'card')" id="pay-card" class="payment-option selected flex-1">
+                                <i class="fa-solid fa-credit-card text-xl mb-1" style="color:var(--gold)"></i>
+                                <div class="font-medium text-sm">Card</div>
+                            </div>
+                            <div onclick="selectPayment(this,'upi')" id="pay-upi" class="payment-option flex-1">
+                                <i class="fa-solid fa-qrcode text-xl mb-1" style="color:var(--gold)"></i>
+                                <div class="font-medium text-sm">UPI</div>
+                            </div>
+                            <div onclick="selectPayment(this,'cod')" id="pay-cod" class="payment-option flex-1">
+                                <i class="fa-solid fa-money-bill text-xl mb-1" style="color:var(--gold)"></i>
+                                <div class="font-medium text-sm">Cash on Delivery</div>
+                            </div>
+                        </div>
+
+                        <!-- Card Fields -->
+                        <div id="card-fields" class="payment-ui space-y-3">
+                            <input placeholder="Card Number (16 digits)" maxlength="19" oninput="formatCard(this)" class="upi-input" id="cardnum">
+                            <div class="grid grid-cols-2 gap-3">
+                                <input placeholder="MM / YY" maxlength="7" oninput="formatExpiry(this)" class="upi-input" id="cardexp">
+                                <input placeholder="CVV" maxlength="3" class="upi-input" type="password" id="cardcvv">
+                            </div>
+                            <input placeholder="Name on Card" class="upi-input" id="cardname">
+                        </div>
+
+                        <!-- UPI Fields -->
+                        <div id="upi-fields" class="payment-ui hidden">
+                            <p class="text-sm mb-3" style="color:var(--text2)">Pay via any UPI app</p>
+                            <input placeholder="Enter UPI ID (e.g. name@upi)" class="upi-input" id="upiid">
+                            <div class="flex gap-3 mt-3">
+                                <span class="text-xs px-3 py-1 rounded-full" style="background:var(--bg3);color:var(--text)">GPay</span>
+                                <span class="text-xs px-3 py-1 rounded-full" style="background:var(--bg3);color:var(--text)">PhonePe</span>
+                                <span class="text-xs px-3 py-1 rounded-full" style="background:var(--bg3);color:var(--text)">Paytm</span>
+                            </div>
+                        </div>
+
+                        <!-- COD -->
+                        <div id="cod-fields" class="payment-ui hidden">
+                            <p class="text-sm" style="color:var(--text2)">💵 Pay cash when your order arrives at your doorstep. No advance payment required.</p>
+                        </div>
+                    </div>
+
+                    <button onclick="processPayment()" id="pay-btn"
+                            class="w-full py-5 rounded-3xl font-bold text-lg flex items-center justify-center gap-3 mt-2" style="background:linear-gradient(135deg,var(--gold),#a67c52);color:#000">
+                        <i class="fa-solid fa-lock"></i> <span id="pay-btn-text">PAY SECURELY</span>
+                    </button>
+                    <p class="text-xs text-center" style="color:var(--text2)">🔒 256-bit SSL encrypted • Your data is safe</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ─── THANK YOU MODAL ─── -->
+<div id="thankyou-modal" onclick="if(event.target.id==='thankyou-modal')hideThankYou()" class="hidden fixed inset-0 z-[12000] flex items-center justify-center p-4" style="background:rgba(0,0,0,0.96)">
+    <div class="max-w-lg w-full text-center" style="color:white">
+        <div class="text-7xl mb-6">🎉</div>
+        <h2 class="text-5xl heading-font mb-4">Thank You!</h2>
+        <p class="text-2xl" style="color:#fde68a">Your order has been confirmed.</p>
+        <div class="mt-8 rounded-3xl p-6 text-left text-sm" style="background:rgba(255,255,255,0.08)">
+            <div class="flex justify-between mb-3"><span>Order ID</span><span id="order-id-display" class="font-mono" style="color:var(--gold)">#MASHAS-XXXXXX</span></div>
+            <div class="flex justify-between mb-3"><span>Status</span><span style="color:#22c55e">✅ Confirmed</span></div>
+            <div class="flex justify-between mb-3"><span>Payment</span><span id="payment-method-display">Card</span></div>
+            <div class="flex justify-between"><span>Expected Delivery</span><span>5-7 Business Days</span></div>
+        </div>
+        <div class="mt-6 p-4 rounded-2xl text-sm" style="background:rgba(37,211,102,0.15);border:1px solid rgba(37,211,102,0.3)">
+            <i class="fa-brands fa-whatsapp text-green-400"></i> Order details sent to Sana & Ashraf on WhatsApp (+91 9696749507)
+        </div>
+        <button onclick="hideThankYou()" class="mt-8 px-12 py-4 rounded-2xl text-lg" style="border:1px solid rgba(255,255,255,0.3);color:white">
+            BACK TO SHOP
+        </button>
+    </div>
+</div>
+
+<!-- ─── WHATSAPP FLOAT ─── -->
+<a href="https://wa.me/919696749507?text=Hi%20MASHAS!%20I%27m%20interested%20in%20your%20luxury%20abayas.%20Can%20you%20help%20me?" 
+   target="_blank" class="wa-float" title="Chat on WhatsApp">
+    <i class="fa-brands fa-whatsapp"></i>
+</a>
+
+<!-- ─── AI BOT FLOAT ─── -->
+<div class="bot-float bot-pulse" onclick="toggleBot()" title="MASHAS AI Assistant" id="bot-fab">
+    <i class="fa-solid fa-sparkles"></i>
+</div>
+
+<!-- ─── AI CHAT WINDOW ─── -->
+<div id="chat-window" class="chat-window hidden">
+    <div class="chat-header flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold" style="background:rgba(0,0,0,0.25)">AI</div>
+            <div>
+                <div class="font-semibold text-sm">MASHAS Assistant</div>
+                <div class="text-xs opacity-80">🟢 Online • Powered by Mohammad Ashraf</div>
+            </div>
+        </div>
+        <i onclick="toggleBot()" class="fa-solid fa-xmark cursor-pointer text-white"></i>
+    </div>
+    <div id="chat-messages" class="chat-messages"></div>
+    <div id="quick-replies" class="quick-replies"></div>
+    <div class="chat-input-row">
+        <input id="chat-input" class="chat-input" placeholder="Ask about abayas, sizes, orders..." onkeydown="if(event.key==='Enter')sendMessage()">
+        <button class="chat-send" onclick="sendMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+    </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════
+//  THEME TOGGLE
+// ════════════════════════════════════════════
+function toggleTheme() {
+    const html = document.documentElement
+    const isDark = html.getAttribute('data-theme') === 'dark'
+    html.setAttribute('data-theme', isDark ? 'light' : 'dark')
+    document.getElementById('theme-icon').textContent = isDark ? '☀️' : '🌙'
+    localStorage.setItem('mashas-theme', isDark ? 'light' : 'dark')
+}
+// Load saved theme
+const savedTheme = localStorage.getItem('mashas-theme') || 'dark'
+document.documentElement.setAttribute('data-theme', savedTheme)
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('theme-icon').textContent = savedTheme === 'dark' ? '🌙' : '☀️'
+})
+
+// ════════════════════════════════════════════
+//  PRODUCTS
+// ════════════════════════════════════════════
+let products = [
+    { id:1, name:"KHALEEJI ABAYA - BLACK OPULENCE", price:4999, fabric:"Imported Nida Fabric", image:"assets/Images/download (38).jpeg", category:"Signature" },
+    { id:2, name:"MEHRUN NOOR ABAYA - ROSE GOLD", price:3999, fabric:"Imported Korean Nida", image:"assets/Images/download (35).jpeg", category:"Pastel" },
+    { id:3, name:"ELA F - EMERALD LUXE", price:5999, fabric:"Liquid Organza", image:"assets/Images/beautiful.jpeg", category:"Signature" },
+    { id:4, name:"ZAYTOON BEIGE ABAYA", price:4499, fabric:"Premium Satin", image:"assets/Images/abaya3.jpeg", category:"Beige" },
+    { id:5, name:"BARBIE PINK KHALEJI", price:5299, fabric:"Imported Organza", image:"assets/Images/abaya2.jpeg", category:"Pastel" },
+    { id:6, name:"NOOR-E-HAYA ABAYA", price:3499, fabric:"Nida with Lace", image:"assets/Images/abaya1.jpeg", category:"Signature" }
+]
+let cart = []
+
+function renderProducts(list) {
+    const grid = document.getElementById('product-grid')
+    grid.innerHTML = ''
+    if (!list.length) {
+        grid.innerHTML = `<div class="col-span-full text-center py-20" style="color:var(--text2)">No products found</div>`
+        return
+    }
+    list.forEach(p => {
+        const card = document.createElement('div')
+        card.className = 'product-card'
+        card.innerHTML = `
+        <div class="relative">
+            <img src="${p.image}" alt="${p.name}" class="w-full aspect-[4/5] object-cover" onerror="this.src='data:image/svg+xml,<svg xmlns=\\'http://www.w3.org/2000/svg\\'><rect width=\\'400\\' height=\\'500\\' fill=\\'%23222\\'/></svg>'">
+            <div class="absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-medium" style="background:rgba(0,0,0,0.7);color:var(--gold)">${p.category}</div>
+        </div>
+        <div class="p-4 md:p-5">
+            <h4 class="font-medium text-sm md:text-base leading-tight" style="color:var(--text)">${p.name}</h4>
+            <p class="text-xs mt-1" style="color:var(--gold)">${p.fabric}</p>
+            <div class="flex justify-between items-center mt-4">
+                <div class="text-2xl font-semibold" style="color:var(--text)">₹${p.price.toLocaleString()}</div>
+                <button onclick="addToCart(${p.id})" class="px-4 py-2 rounded-xl text-sm font-medium flex items-center gap-2" style="background:var(--text);color:var(--bg)">
+                    <i class="fa-solid fa-bag-shopping text-xs"></i> ADD
                 </button>
             </div>
-        </div>
-        
-        <!-- Mobile Menu -->
-        <div id="mobile-menu" class="hidden md:hidden bg-black border-t border-white/10 px-6 py-4">
-            <a href="#" onclick="navigateToSection('home');toggleMobileMenu()" class="block py-3 text-lg">Home</a>
-            <a href="#" onclick="navigateToSection('shop');toggleMobileMenu()" class="block py-3 text-lg">Shop Luxury Abayas</a>
-            <a href="#" onclick="navigateToSection('collections');toggleMobileMenu()" class="block py-3 text-lg">Collections</a>
-            <a href="#" onclick="navigateToSection('about');toggleMobileMenu()" class="block py-3 text-lg">Our Story</a>
-        </div>
-    </header>
+        </div>`
+        grid.appendChild(card)
+    })
+}
 
-    <!-- HERO BANNER -->
-    <section id="home" class="relative h-screen flex items-center justify-center overflow-hidden">
-        <div class="absolute inset-0 bg-gradient-to-b from-black/70 via-black/30 to-black z-10"></div>
-        <img src="assets/Images/Premium Mocha Olive Open Abaya.jfif" alt="Luxury Abaya" class="absolute inset-0 w-full h-full object-cover">
-        
-        <div class="relative z-20 text-center max-w-2xl px-6">
-            <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-6 py-2 rounded-full text-sm mb-6">
-                <span class="w-2 h-2 bg-amber-400 rounded-full animate-pulse"></span>
-                NEW ARRIVALS • LUXURY COLLECTION 2026
-            </div>
-            <h1 class="text-6xl md:text-7xl heading-font leading-none mb-6">MASHAS<br>LUXURY ABAYAS</h1>
-            <p class="text-xl md:text-2xl text-amber-100 mb-8">Timeless elegance crafted for the modern woman • Designed by Sana & Ashraf</p>
-            <button onclick="navigateToSection('shop')" 
-                    class="bg-white text-black px-10 py-4 rounded-full text-lg font-semibold flex items-center gap-3 mx-auto hover:bg-amber-400 hover:text-black">
-                SHOP NOW
-                <i class="fa-solid fa-arrow-right"></i>
-            </button>
-            <div class="mt-12 text-xs tracking-[2px] flex justify-center gap-8">
-                <div>123+ STYLES</div>
-                <div>PREMIUM FABRICS</div>
-                <div>FREE SHIPPING OVER ₹5000</div>
-            </div>
-        </div>
-        
-        <!-- Scroll indicator -->
-        <div class="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center text-xs tracking-widest z-20">
-            SCROLL TO EXPLORE
-            <i class="fa-solid fa-chevron-down mt-2 animate-bounce"></i>
-        </div>
-    </section>
+function addToCart(id) {
+    const p = products.find(x => x.id === id)
+    if (!p) return
+    const ex = cart.find(x => x.id === id)
+    if (ex) ex.quantity++
+    else cart.push({...p, quantity:1})
+    updateCartCount()
+    showToast(`${p.name.split(' - ')[0]} added to cart!`, 'info')
+    toggleCart()
+}
 
-    <!-- SHOP SECTION -->
-    <section id="shop" class="max-w-7xl mx-auto px-6 py-16">
-        <div class="flex flex-col md:flex-row justify-between items-end mb-10">
-            <div>
-                <h2 class="text-5xl heading-font">Luxury Abayas Collection</h2>
-                <p class="text-amber-300">Handcrafted elegance • 123 exquisite pieces</p>
+function updateCartCount() {
+    document.getElementById('cart-count').textContent = cart.reduce((a,i) => a + i.quantity, 0)
+}
+
+function renderCart() {
+    const c = document.getElementById('cart-items')
+    c.innerHTML = ''
+    if (!cart.length) {
+        c.innerHTML = `<div class="text-center py-12" style="color:var(--text2)">Your cart is empty<br><br><button onclick="toggleCart();navigateToSection('shop')" class="px-6 py-2 rounded-2xl text-sm" style="background:var(--gold);color:#000">Browse Products</button></div>`
+        document.getElementById('cart-subtotal').textContent = '₹0'
+        return
+    }
+    let subtotal = 0
+    cart.forEach((item, i) => {
+        const total = item.price * item.quantity
+        subtotal += total
+        const d = document.createElement('div')
+        d.className = 'flex gap-4'
+        d.innerHTML = `
+        <img src="${item.image}" class="w-18 h-20 object-cover rounded-2xl flex-shrink-0" style="width:72px" onerror="this.src='data:image/svg+xml,<svg xmlns=\\'http://www.w3.org/2000/svg\\'><rect width=\\'72\\' height=\\'80\\' fill=\\'%23333\\'/></svg>'">
+        <div class="flex-1 min-w-0">
+            <div class="flex justify-between gap-2">
+                <div class="text-sm font-medium truncate" style="color:var(--text)">${item.name}</div>
+                <div onclick="removeFromCart(${i})" class="cursor-pointer flex-shrink-0 text-red-400 text-xs"><i class="fa-solid fa-trash"></i></div>
             </div>
-            
-            <!-- Filters -->
-            <div class="flex items-center gap-4 mt-6 md:mt-0">
-                <select id="sort-select" onchange="sortProducts()" class="bg-white/10 border border-white/20 text-white px-5 py-3 rounded-2xl text-sm focus:outline-none">
-                    <option value="default">Sort: Featured</option>
-                    <option value="price-low">Price: Low to High</option>
-                    <option value="price-high">Price: High to Low</option>
-                    <option value="name">Name A-Z</option>
-                </select>
-                
-                <div onclick="filterByPrice()" class="cursor-pointer px-5 py-3 bg-white/10 hover:bg-white/20 rounded-2xl flex items-center gap-2 text-sm">
-                    <i class="fa-solid fa-filter"></i>
-                    <span>₹3000 - ₹8000</span>
+            <div class="text-xs mt-1" style="color:var(--text2)">${item.fabric}</div>
+            <div class="flex justify-between items-center mt-3">
+                <div class="flex rounded-xl overflow-hidden" style="border:1px solid var(--border2)">
+                    <button onclick="changeQty(${i},-1)" class="px-3 py-1 text-sm" style="color:var(--text)">−</button>
+                    <span class="px-3 py-1 text-sm" style="color:var(--text)">${item.quantity}</span>
+                    <button onclick="changeQty(${i},1)" class="px-3 py-1 text-sm" style="color:var(--text)">+</button>
+                </div>
+                <div class="text-right">
+                    <div class="font-semibold text-sm" style="color:var(--text)">₹${total.toLocaleString()}</div>
+                    <div class="text-xs" style="color:var(--text2)">₹${item.price} each</div>
                 </div>
             </div>
-        </div>
+        </div>`
+        c.appendChild(d)
+    })
+    document.getElementById('cart-subtotal').textContent = `₹${subtotal.toLocaleString()}`
+}
 
-        <!-- Product Grid -->
-        <div id="product-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-            <!-- Populated by JavaScript -->
-        </div>
-    </section>
+function changeQty(i, d) {
+    cart[i].quantity = Math.max(1, cart[i].quantity + d)
+    renderCart(); updateCartCount()
+}
+function removeFromCart(i) { cart.splice(i, 1); renderCart(); updateCartCount() }
 
-    <!-- COLLECTIONS -->
-    <section id="collections" class="bg-white/5 py-16">
-        <div class="max-w-7xl mx-auto px-6">
-            <h2 class="text-4xl heading-font text-center mb-12">Our Exclusive Collections</h2>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-                <div class="group cursor-pointer">
-                    <div class="aspect-square bg-gradient-to-br from-amber-900 to-black rounded-3xl overflow-hidden mb-4">
-                        <img src="assets/Images/abaya1.jpeg" class="w-full h-full object-cover group-hover:scale-110">
-                    </div>
-                    <p class="text-center text-lg">Signature Black Series</p>
-                </div>
-                <div class="group cursor-pointer">
-                    <div class="aspect-square bg-gradient-to-br from-pink-900 to-black rounded-3xl overflow-hidden mb-4">
-                        <img src="assets/Images/abaya2.jpeg" class="w-full h-full object-cover group-hover:scale-110">
-                    </div>
-                    <p class="text-center text-lg">Pastel Elegance</p>
-                </div>
-                <div class="group cursor-pointer">
-                    <div class="aspect-square bg-gradient-to-br from-emerald-900 to-black rounded-3xl overflow-hidden mb-4">
-                        <img src="assets/Images/abaya3.jpeg" class="w-full h-full object-cover group-hover:scale-110">
-                    </div>
-                    <p class="text-center text-lg">Emerald Luxe</p>
-                </div>
-                <div class="group cursor-pointer">
-                    <div class="aspect-square bg-gradient-to-br from-amber-900 to-black rounded-3xl overflow-hidden mb-4">
-                        <img src="assets/Images/beautiful.jpeg" class="w-full h-full object-cover group-hover:scale-110">
-                    </div>
-                    <p class="text-center text-lg">Beige Opulence</p>
-                </div>
-            </div>
-        </div>
-    </section>
+function toggleCart() {
+    const p = document.getElementById('cart-panel'), o = document.getElementById('cart-overlay')
+    if (p.classList.contains('hidden')) { renderCart(); p.classList.remove('hidden'); o.classList.remove('hidden') }
+    else { p.classList.add('hidden'); o.classList.add('hidden') }
+}
 
-    <!-- ABOUT / STORY -->
-    <section id="about" class="max-w-7xl mx-auto px-6 py-20">
-        <div class="grid md:grid-cols-2 gap-16 items-center">
-            <div>
-                <span class="text-amber-400 text-sm tracking-[3px]">FOUNDER'S VISION</span>
-                <h2 class="text-5xl heading-font leading-tight mt-3">Crafted with love by Sana & Ashraf</h2>
-                <p class="mt-8 text-lg leading-relaxed text-gray-300">
-                    MASHAS was born from a passion for timeless modesty and modern luxury. 
-                    As the owner and founder, Sana & Ashraf personally curates every piece to celebrate 
-                    the grace and strength of every woman.
-                </p>
-                <div class="mt-10 flex items-center gap-8">
-                    <div>
-                        <div class="text-4xl font-semibold">Sana & Ashraf</div>
-                        <div class="text-amber-400 text-sm">Owner & Founder</div>
-                    </div>
-                    <div class="text-sm max-w-xs">
-                        "Every stitch tells a story of elegance, tradition, and empowerment."
-                    </div>
-                </div>
-                <p class="mt-12 text-xs uppercase">Developed with ❤️ by Stark</p>
-            </div>
-            <div class="bg-white/10 rounded-3xl p-8">
-                <p class="italic text-lg">"MASHAS is more than clothing — it's a movement of quiet luxury and confidence."</p>
-                <div class="flex items-center gap-4 mt-10">
-                    <div class="w-12 h-12 bg-amber-400 rounded-2xl flex items-center justify-center text-black font-bold">SA</div>
-                    <div>
-                        <div>Sana & Ashraf</div>
-                        <div class="text-amber-400 text-sm">MASHAS • Lucknow</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+// ════════════════════════════════════════════
+//  CHECKOUT & PAYMENT
+// ════════════════════════════════════════════
+let selectedPayMethod = 'card'
 
-    <!-- CART SLIDE-IN -->
-    <div onclick="if(event.target.id === 'cart-overlay') toggleCart()" id="cart-overlay" class="hidden fixed inset-0 bg-black/70 z-[9999]"></div>
-    <div id="cart-panel" class="hidden fixed top-0 bottom-0 right-0 w-full md:w-96 bg-black border-l border-white/10 shadow-2xl z-[10000] flex flex-col cart-slide">
-        <div class="p-6 border-b flex items-center justify-between">
-            <h3 class="text-2xl">Your Cart</h3>
-            <i onclick="toggleCart()" class="fa-solid fa-xmark text-2xl cursor-pointer"></i>
-        </div>
-        
-        <div id="cart-items" class="flex-1 overflow-auto p-6 space-y-6">
-            <!-- Filled by JS -->
-        </div>
-        
-        <div class="p-6 border-t">
-            <div class="flex justify-between text-lg mb-2">
-                <span>Subtotal</span>
-                <span id="cart-subtotal" class="font-semibold">₹0</span>
-            </div>
-            <div class="text-xs text-gray-400">Shipping calculated at checkout • Free over ₹5000</div>
-            
-            <button onclick="goToCheckout()" 
-                    class="w-full mt-8 bg-white text-black py-5 rounded-2xl font-semibold text-lg flex items-center justify-center gap-2">
-                PROCEED TO CHECKOUT
-                <i class="fa-solid fa-arrow-right"></i>
-            </button>
-            
-            <button onclick="toggleCart()" class="w-full mt-4 text-white/70 hover:text-white">Continue Shopping</button>
-        </div>
-    </div>
+function goToCheckout() { toggleCart(); showCheckout() }
 
-    <!-- CHECKOUT PAGE (Modal) -->
-    <div onclick="if(event.target.id === 'checkout-modal') hideCheckout()" id="checkout-modal" class="hidden fixed inset-0 bg-black/90 z-[11000] flex items-center justify-center p-4">
-        <div onclick="event.stopImmediatePropagation()" class="max-w-2xl w-full bg-black rounded-3xl max-h-[90vh] overflow-auto">
-            <div class="p-8">
-                <div class="flex justify-between items-center mb-8">
-                    <h2 class="text-4xl heading-font">Checkout</h2>
-                    <i onclick="hideCheckout()" class="fa-solid fa-xmark text-3xl cursor-pointer"></i>
-                </div>
-                
-                <div class="grid md:grid-cols-5 gap-8">
-                    <!-- Order Summary -->
-                    <div class="md:col-span-2">
-                        <h4 class="font-medium mb-4">Order Summary</h4>
-                        <div id="checkout-summary" class="space-y-4 mb-8">
-                            <!-- JS populated -->
-                        </div>
-                        <div class="flex justify-between text-xl border-t pt-4">
-                            <span>Total</span>
-                            <span id="checkout-total" class="font-semibold">₹0</span>
-                        </div>
-                    </div>
-                    
-                    <!-- Payment Form -->
-                    <div class="md:col-span-3">
-                        <div class="space-y-6">
-                            <div>
-                                <label class="block text-sm mb-2">Full Name</label>
-                                <input id="name" type="text" value="Sana & Ashraf" class="w-full bg-white/10 border border-white/30 rounded-2xl px-6 py-4 focus:outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-sm mb-2">Shipping Address</label>
-                                <input id="address" type="text" value="Lucknow, Uttar Pradesh" class="w-full bg-white/10 border border-white/30 rounded-2xl px-6 py-4 focus:outline-none">
-                            </div>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-sm mb-2">Email</label>
-                                    <input id="email" type="email" value="owner@mashas.in" class="w-full bg-white/10 border border-white/30 rounded-2xl px-6 py-4 focus:outline-none">
-                                </div>
-                                <div>
-                                    <label class="block text-sm mb-2">Phone</label>
-                                    <input id="phone" type="tel" value="+91 98765 43210" class="w-full bg-white/10 border border-white/30 rounded-2xl px-6 py-4 focus:outline-none">
-                                </div>
-                            </div>
-                            
-                            <!-- Payment -->
-                            <div>
-                                <label class="block text-sm mb-3">Payment Method</label>
-                                <div class="flex gap-4">
-                                    <div onclick="selectPayment(this)" class="payment-option flex-1 border-2 border-amber-400 bg-white/10 rounded-2xl p-4 text-center cursor-pointer">
-                                        <i class="fa-solid fa-credit-card text-2xl mb-2"></i>
-                                        <div class="font-medium">Card</div>
-                                        <div class="text-xs text-amber-400">Powered by Razorpay</div>
-                                    </div>
-                                    <div onclick="selectPayment(this)" class="payment-option flex-1 border border-white/30 rounded-2xl p-4 text-center cursor-pointer">
-                                        <i class="fa-solid fa-qrcode text-2xl mb-2"></i>
-                                        <div class="font-medium">UPI / Wallet</div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <button onclick="processPayment()" 
-                                    class="w-full py-6 bg-gradient-to-r from-amber-400 to-yellow-600 text-black font-bold text-xl rounded-3xl flex items-center justify-center gap-3">
-                                <i class="fa-solid fa-lock"></i>
-                                PAY SECURELY • COMPLETE ORDER
-                            </button>
-                            
-                            <p class="text-xs text-center text-gray-400">🔒 Your payment is protected with 256-bit SSL encryption</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+function showCheckout() {
+    if (!cart.length) { showToast('Your cart is empty!', 'error'); return }
+    const modal = document.getElementById('checkout-modal')
+    modal.classList.remove('hidden')
+    const s = document.getElementById('checkout-summary')
+    s.innerHTML = ''
+    let total = 0
+    cart.forEach(item => {
+        const t = item.price * item.quantity; total += t
+        const r = document.createElement('div')
+        r.className = 'flex justify-between text-sm'
+        r.innerHTML = `<span style="color:var(--text2)">${item.quantity}× ${item.name.split(' - ')[0]}</span><span style="color:var(--text)">₹${t.toLocaleString()}</span>`
+        s.appendChild(r)
+    })
+    document.getElementById('checkout-total').textContent = `₹${total.toLocaleString()}`
+    updatePayBtnText()
+}
+function hideCheckout() { document.getElementById('checkout-modal').classList.add('hidden') }
 
-    <!-- THANK YOU MODAL -->
-    <div id="thankyou-modal" onclick="if(event.target.id === 'thankyou-modal') hideThankYou()" class="hidden fixed inset-0 bg-black/95 z-[12000] flex items-center justify-center p-4">
-        <div class="max-w-lg w-full text-center">
-            <!-- Thank You Card -->
-            <img id="thankyou-image" src="assets/Images/Thank You card.jpeg" 
-                 alt="Thank You For Your Purchase" class="mx-auto rounded-3xl shadow-2xl mb-8">
-            
-            <h2 class="text-5xl heading-font mb-4">Thank You!</h2>
-            <p class="text-2xl text-amber-300">Your order has been placed successfully.</p>
-            <p class="mt-8 text-lg">An order confirmation has been sent to your email and to the owner Sana & Ashraf.</p>
-            
-            <div class="mt-12 bg-white/10 rounded-3xl p-6 text-left text-sm">
-                <div class="flex justify-between"><span>Order ID</span><span id="order-id-display" class="font-mono">#MASHAS-XXXXXX</span></div>
-                <div class="flex justify-between mt-3"><span>Status</span><span class="text-emerald-400">✅ Confirmed</span></div>
-                <div class="flex justify-between mt-3"><span>Expected Delivery</span><span>8-12 April 2026</span></div>
-            </div>
-            
-            <button onclick="hideThankYou()" class="mt-10 px-12 py-4 border border-white/30 hover:border-amber-400 rounded-2xl text-lg">
-                BACK TO SHOP
-            </button>
-            
-            <p class="text-xs mt-8 text-gray-500">You will receive a WhatsApp notification from Sana & Ashraf shortly.</p>
-        </div>
-    </div>
+function selectPayment(el, method) {
+    selectedPayMethod = method
+    document.querySelectorAll('.payment-option').forEach(o => o.classList.remove('selected'))
+    el.classList.add('selected')
+    document.getElementById('card-fields').classList.add('hidden')
+    document.getElementById('upi-fields').classList.add('hidden')
+    document.getElementById('cod-fields').classList.add('hidden')
+    document.getElementById(method === 'card' ? 'card-fields' : method === 'upi' ? 'upi-fields' : 'cod-fields').classList.remove('hidden')
+    updatePayBtnText()
+}
 
-    <!-- FOOTER -->
-    <footer class="bg-black border-t border-white/10 py-12">
-        <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-4 gap-8 text-sm">
-            <div>
-               <img id="footer-logo" src="assets/Images/Logo.jpeg" 
-                     alt="MASHAS" class="h-10 mb-4 logo.png">
-                <p class="text-gray-400">Luxury Abayas • Timeless Modesty</p>
-                <p class="text-xs mt-6">© 2026 MASHAS • All Rights Reserved</p>
-                <p class="text-xs text-amber-400">Owner & Founder: Sana & Ashraf</p>
-                <p class="text-xs">Developed by Stark</p>
-            </div>
-            <div>
-                <div class="font-medium mb-4">SHOP</div>
-                <ul class="space-y-3 text-gray-400">
-                    <li>Luxury Abayas</li>
-                    <li>New Arrivals</li>
-                    <li>Best Sellers</li>
-                    <li>Sale</li>
-                </ul>
-            </div>
-            <div>
-                <div class="font-medium mb-4">SUPPORT</div>
-                <ul class="space-y-3 text-gray-400">
-                    <li>Shipping Policy</li>
-                    <li>Returns</li>
-                    <li>Contact Us</li>
-                    <li>Track Order</li>
-                </ul>
-            </div>
-            <div>
-                <div class="font-medium mb-4">CONNECT</div>
-                <div class="flex gap-6 text-2xl">
-                    <i class="fa-brands fa-instagram cursor-pointer"></i>
-                    <i class="fa-brands fa-whatsapp cursor-pointer"></i>
-                    <i class="fa-brands fa-facebook cursor-pointer"></i>
-                </div>
-                <p class="mt-8 text-xs">Lucknow, Uttar Pradesh, India</p>
-                <p class="text-xs text-gray-400">+91 9696749507 • mashas@gmail.com</p>
-            </div>
-        </div>
-    </footer>
+function updatePayBtnText() {
+    const total = cart.reduce((a, i) => a + i.price * i.quantity, 0)
+    const texts = { card: `PAY ₹${total.toLocaleString()} SECURELY`, upi: `PAY ₹${total.toLocaleString()} VIA UPI`, cod: 'CONFIRM ORDER (Cash on Delivery)' }
+    document.getElementById('pay-btn-text').textContent = texts[selectedPayMethod] || 'CONFIRM ORDER'
+}
 
-    <script>
-        // Tailwind script already loaded via CDN
-        function initializeTailwind() {
-            tailwind.config = {
-                content: [],
-                theme: { extend: {} }
-            }
-        }
-        
-        // Sample Products (similar to anahco.com luxury style)
-        let products = [
-            {
-                id: 1,
-                name: "KHALEEJI ABAYA - BLACK OPULENCE",
-                price: 4999,
-                fabric: "Imported Nida Fabric",
-                image: "assets/Images/download (38).jpeg",
-                category: "Signature"
-            },
-            {
-                id: 2,
-                name: "MEHRUN NOOR ABAYA - ROSE GOLD",
-                price: 3999,
-                fabric: "Imported Korean Nida",
-                image: "assets/Images/download (35).jpeg",
-                category: "Pastel"
-            },
-            {
-                id: 3,
-                name: "ELA F - EMERALD LUXE",
-                price: 5999,
-                fabric: "Liquid Organza",
-                image: "assets/Images/beautiful.jpeg",
-                category: "Signature"
-            },
-            {
-                id: 4,
-                name: "ZAYTOON BEIGE ABAYA",
-                price: 4499,
-                fabric: "Premium Satin",
-                image: "assets/Images/abaya3.jpeg",
-                category: "Beige"
-            },
-            {
-                id: 5,
-                name: "BARBIE PINK KHALEJI",
-                price: 5299,
-                fabric: "Imported Organza",
-                image: "assets/Images/abaya2.jpeg",
-                category: "Pastel"
-            },
-            {
-                id: 6,
-                name: "NOOR-E-HAYA ABAYA",
-                price: 3499,
-                fabric: "Nida with Lace",
-                image: "assets/Images/abaya1.jpeg",
-                category: "Signature"
-            }
-        ]
-        
-        let cart = []
-        
-        // Render products
-        function renderProducts(filteredProducts) {
-            const grid = document.getElementById('product-grid')
-            grid.innerHTML = ''
-            
-            filteredProducts.forEach(product => {
-                const card = document.createElement('div')
-                card.className = 'product-card bg-white/5 rounded-3xl overflow-hidden'
-                card.innerHTML = `
-                    <div class="relative">
-                        <img src="${product.image}" alt="${product.name}" class="w-full aspect-[4/5] object-cover">
-                        <div class="absolute top-4 right-4 bg-black/70 text-xs px-3 py-1 rounded-2xl">${product.category}</div>
-                    </div>
-                    <div class="p-5">
-                        <h4 class="font-medium text-lg leading-tight">${product.name}</h4>
-                        <p class="text-amber-300 text-sm mt-1">${product.fabric}</p>
-                        <div class="flex justify-between items-end mt-6">
-                            <div class="text-3xl font-semibold">₹${product.price}</div>
-                            <button onclick="addToCart(${product.id}); event.stopImmediatePropagation()" 
-                                    class="bg-white text-black px-6 py-3 rounded-2xl text-sm font-medium flex items-center gap-2">
-                                <i class="fa-solid fa-bag-shopping"></i>
-                                ADD
-                            </button>
-                        </div>
-                    </div>
-                `
-                grid.appendChild(card)
+function formatCard(input) {
+    let v = input.value.replace(/\D/g,'').substring(0,16)
+    input.value = v.match(/.{1,4}/g)?.join(' ') || v
+}
+function formatExpiry(input) {
+    let v = input.value.replace(/\D/g,'').substring(0,4)
+    if (v.length >= 2) v = v.substring(0,2) + ' / ' + v.substring(2)
+    input.value = v
+}
+
+function processPayment() {
+    const name = document.getElementById('name').value.trim()
+    const address = document.getElementById('address').value.trim()
+    const email = document.getElementById('email').value.trim()
+    const phone = document.getElementById('phone').value.trim()
+    if (!name || !address || !email || !phone) { showToast('Please fill all fields!', 'error'); return }
+
+    // Payment validation
+    if (selectedPayMethod === 'card') {
+        const cardnum = document.getElementById('cardnum').value.replace(/\s/g,'')
+        if (cardnum.length < 16) { showToast('Please enter a valid 16-digit card number', 'error'); return }
+        if (!document.getElementById('cardexp').value || !document.getElementById('cardcvv').value) { showToast('Enter card expiry and CVV', 'error'); return }
+    }
+    if (selectedPayMethod === 'upi') {
+        const upi = document.getElementById('upiid').value.trim()
+        if (!upi.includes('@')) { showToast('Enter a valid UPI ID (e.g. name@upi)', 'error'); return }
+    }
+
+    const btn = document.getElementById('pay-btn')
+    btn.innerHTML = '<div class="spinner"></div>'
+    btn.disabled = true
+
+    setTimeout(() => {
+        const orderId = `MASHAS-${Math.floor(100000 + Math.random() * 900000)}`
+        document.getElementById('order-id-display').textContent = `#${orderId}`
+        document.getElementById('payment-method-display').textContent = selectedPayMethod === 'card' ? '💳 Card' : selectedPayMethod === 'upi' ? '📱 UPI' : '💵 Cash on Delivery'
+        hideCheckout()
+        setTimeout(() => {
+            document.getElementById('thankyou-modal').classList.remove('hidden')
+            // Notify owner via WhatsApp deep link
+            const total = cart.reduce((a, i) => a + i.price * i.quantity, 0)
+            const msg = encodeURIComponent(`🛍️ NEW ORDER #${orderId}\n\nCustomer: ${name}\nPhone: ${phone}\nAddress: ${address}\nPayment: ${selectedPayMethod.toUpperCase()}\nTotal: ₹${total.toLocaleString()}\n\nItems:\n${cart.map(i => `• ${i.quantity}× ${i.name} — ₹${(i.price*i.quantity).toLocaleString()}`).join('\n')}`)
+            window.open(`https://wa.me/919696749507?text=${msg}`, '_blank')
+            cart = []; updateCartCount()
+            btn.innerHTML = '<i class="fa-solid fa-lock"></i> <span id="pay-btn-text">PAY SECURELY</span>'
+            btn.disabled = false
+        }, 300)
+    }, 1800)
+}
+
+function hideThankYou() {
+    document.getElementById('thankyou-modal').classList.add('hidden')
+    window.scrollTo({ top:0, behavior:'smooth' })
+}
+
+// ════════════════════════════════════════════
+//  SORT / FILTER
+// ════════════════════════════════════════════
+function sortProducts() {
+    const v = document.getElementById('sort-select').value
+    let s = [...products]
+    if (v==='price-low') s.sort((a,b)=>a.price-b.price)
+    else if (v==='price-high') s.sort((a,b)=>b.price-a.price)
+    else if (v==='name') s.sort((a,b)=>a.name.localeCompare(b.name))
+    renderProducts(s)
+}
+
+// ════════════════════════════════════════════
+//  AI CHATBOT
+// ════════════════════════════════════════════
+let chatOpen = false
+let chatHistory = []
+let botReady = false
+
+const SYSTEM_PROMPT = `You are MASHAS AI Assistant, a helpful and friendly shopping assistant for MASHAS Luxury Abayas — a premium abaya brand based in Lucknow, India, owned by Sana & Ashraf.
+
+Products available:
+1. KHALEEJI ABAYA - BLACK OPULENCE | ₹4,999 | Imported Nida Fabric | Category: Signature
+2. MEHRUN NOOR ABAYA - ROSE GOLD | ₹3,999 | Imported Korean Nida | Category: Pastel
+3. ELA F - EMERALD LUXE | ₹5,999 | Liquid Organza | Category: Signature
+4. ZAYTOON BEIGE ABAYA | ₹4,499 | Premium Satin | Category: Beige
+5. BARBIE PINK KHALEJI | ₹5,299 | Imported Organza | Category: Pastel
+6. NOOR-E-HAYA ABAYA | ₹3,499 | Nida with Lace | Category: Signature
+
+Contact: +91 9696749507 | mashas@gmail.com | Lucknow, UP
+Free shipping on orders over ₹5,000. Delivery in 5-7 business days.
+
+Your job: Help customers find their perfect abaya, answer questions about fabrics, prices, shipping, and guide them to make a purchase. Be warm, elegant, and knowledgeable about modest fashion. Keep responses concise (2-3 sentences max). Use emojis sparingly. If someone wants to order, tell them to click "Add to Cart" on the product or WhatsApp us directly at +91 9696749507.`
+
+function toggleBot() {
+    chatOpen = !chatOpen
+    const w = document.getElementById('chat-window')
+    if (chatOpen) {
+        w.classList.remove('hidden')
+        if (!botReady) { botReady = true; initBot() }
+        setTimeout(() => document.getElementById('chat-input').focus(), 100)
+    } else {
+        w.classList.add('hidden')
+    }
+}
+
+function initBot() {
+    addBotMsg("Welcome to MASHAS! ✨ I'm your personal style assistant. How can I help you find the perfect abaya today?")
+    showQuickReplies(["Show me all products", "Best sellers", "Budget under ₹4000", "Fabric guide", "Shipping info"])
+}
+
+function addBotMsg(text) {
+    const m = document.getElementById('chat-messages')
+    const d = document.createElement('div')
+    d.className = 'chat-msg bot'
+    d.textContent = text
+    m.appendChild(d)
+    m.scrollTop = m.scrollHeight
+}
+function addUserMsg(text) {
+    const m = document.getElementById('chat-messages')
+    const d = document.createElement('div')
+    d.className = 'chat-msg user'
+    d.textContent = text
+    m.appendChild(d)
+    m.scrollTop = m.scrollHeight
+}
+function showTyping() {
+    const m = document.getElementById('chat-messages')
+    const d = document.createElement('div')
+    d.className = 'chat-msg bot typing'; d.id = 'typing-indicator'
+    d.innerHTML = '<div class="dot"></div><div class="dot"></div><div class="dot"></div>'
+    m.appendChild(d); m.scrollTop = m.scrollHeight
+}
+function hideTyping() {
+    const t = document.getElementById('typing-indicator')
+    if (t) t.remove()
+}
+
+function showQuickReplies(replies) {
+    const qr = document.getElementById('quick-replies')
+    qr.innerHTML = ''
+    replies.forEach(r => {
+        const b = document.createElement('button')
+        b.className = 'qr-btn'
+        b.textContent = r
+        b.onclick = () => { qr.innerHTML=''; sendUserMessage(r) }
+        qr.appendChild(b)
+    })
+}
+
+async function sendMessage() {
+    const input = document.getElementById('chat-input')
+    const text = input.value.trim()
+    if (!text) return
+    input.value = ''
+    await sendUserMessage(text)
+}
+
+async function sendUserMessage(text) {
+    document.getElementById('quick-replies').innerHTML = ''
+    addUserMsg(text)
+    chatHistory.push({ role: 'user', content: text })
+    showTyping()
+
+    try {
+        const res = await fetch('https://api.anthropic.com/v1/messages', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                model: 'claude-sonnet-4-20250514',
+                max_tokens: 300,
+                system: SYSTEM_PROMPT,
+                messages: chatHistory.slice(-10)
             })
-            
-            if (filteredProducts.length === 0) {
-                grid.innerHTML = `<div class="col-span-full text-center py-20 text-gray-400">No products found</div>`
-            }
+        })
+        const data = await res.json()
+        hideTyping()
+        const reply = data.content?.[0]?.text || "I'm having trouble connecting. Please WhatsApp us at +91 9696749507 😊"
+        chatHistory.push({ role: 'assistant', content: reply })
+        addBotMsg(reply)
+
+        // Smart quick replies based on context
+        const lower = text.toLowerCase()
+        if (lower.includes('product') || lower.includes('show') || lower.includes('all')) {
+            showQuickReplies(["Signature collection", "Pastel collection", "Under ₹4000", "Add to cart help"])
+        } else if (lower.includes('price') || lower.includes('budget') || lower.includes('cheap')) {
+            showQuickReplies(["₹3,499 - Noor-e-Haya", "₹3,999 - Mehrun Noor", "₹4,499 - Zaytoon Beige"])
+        } else if (lower.includes('ship') || lower.includes('deliver') || lower.includes('order')) {
+            showQuickReplies(["Track my order", "WhatsApp support", "Return policy"])
+        } else {
+            showQuickReplies(["Browse products", "WhatsApp us", "Check cart"])
         }
-        
-        // Add to cart
-        function addToCart(id) {
-            const product = products.find(p => p.id === id)
-            if (!product) return
-            
-            const existing = cart.find(item => item.id === id)
-            if (existing) {
-                existing.quantity = (existing.quantity || 1) + 1
-            } else {
-                cart.push({...product, quantity: 1})
-            }
-            
-            updateCartCount()
-            toggleCart() // Open cart automatically
-        }
-        
-        function updateCartCount() {
-            const count = cart.reduce((acc, item) => acc + (item.quantity || 1), 0)
-            document.getElementById('cart-count').textContent = count
-        }
-        
-        // Render cart
-        function renderCart() {
-            const container = document.getElementById('cart-items')
-            container.innerHTML = ''
-            
-            if (cart.length === 0) {
-                container.innerHTML = `<div class="text-center py-12 text-gray-400">Your cart is empty</div>`
-                document.getElementById('cart-subtotal').textContent = '₹0'
-                return
-            }
-            
-            let subtotal = 0
-            
-            cart.forEach((item, index) => {
-                const qty = item.quantity || 1
-                const total = item.price * qty
-                subtotal += total
-                
-                const div = document.createElement('div')
-                div.className = 'flex gap-4'
-                div.innerHTML = `
-                    <img src="${item.image}" class="w-20 h-20 object-cover rounded-2xl">
-                    <div class="flex-1">
-                        <div class="flex justify-between">
-                            <div class="font-medium">${item.name}</div>
-                            <div onclick="removeFromCart(${index})" class="text-red-400 cursor-pointer"><i class="fa-solid fa-trash"></i></div>
-                        </div>
-                        <div class="text-xs text-gray-400">${item.fabric}</div>
-                        <div class="flex justify-between mt-4">
-                            <div class="flex border border-white/30 rounded-2xl">
-                                <button onclick="changeQuantity(${index}, -1)" class="px-3">-</button>
-                                <span class="px-4 py-1">${qty}</span>
-                                <button onclick="changeQuantity(${index}, 1)" class="px-3">+</button>
-                            </div>
-                            <div class="text-right">
-                                <div class="font-semibold">₹${total}</div>
-                                <div class="text-xs">₹${item.price} each</div>
-                            </div>
-                        </div>
-                    </div>
-                `
-                container.appendChild(div)
-            })
-            
-            document.getElementById('cart-subtotal').textContent = `₹${subtotal}`
-        }
-        
-        function changeQuantity(index, change) {
-            const item = cart[index]
-            if (!item) return
-            item.quantity = Math.max(1, (item.quantity || 1) + change)
-            renderCart()
-            updateCartCount()
-        }
-        
-        function removeFromCart(index) {
-            cart.splice(index, 1)
-            renderCart()
-            updateCartCount()
-        }
-        
-        // Toggle cart
-        function toggleCart() {
-            const panel = document.getElementById('cart-panel')
-            const overlay = document.getElementById('cart-overlay')
-            
-            if (panel.classList.contains('hidden')) {
-                renderCart()
-                panel.classList.remove('hidden')
-                overlay.classList.remove('hidden')
-            } else {
-                panel.classList.add('hidden')
-                overlay.classList.add('hidden')
-            }
-        }
-        
-        // Go to checkout
-        function goToCheckout() {
-            toggleCart()
-            showCheckout()
-        }
-        
-        function showCheckout() {
-            const modal = document.getElementById('checkout-modal')
-            modal.classList.remove('hidden')
-            
-            const summary = document.getElementById('checkout-summary')
-            summary.innerHTML = ''
-            
-            let total = 0
-            
-            cart.forEach(item => {
-                const qty = item.quantity || 1
-                const itemTotal = item.price * qty
-                total += itemTotal
-                
-                const row = document.createElement('div')
-                row.className = 'flex justify-between text-sm'
-                row.innerHTML = `
-                    <div>${qty} × ${item.name}</div>
-                    <div>₹${itemTotal}</div>
-                `
-                summary.appendChild(row)
-            })
-            
-            document.getElementById('checkout-total').textContent = `₹${total}`
-        }
-        
-        function hideCheckout() {
-            document.getElementById('checkout-modal').classList.add('hidden')
-        }
-        
-        // Fake payment processing
-        function processPayment() {
-            // Simulate processing
-            const name = document.getElementById('name').value || "Customer"
-            
-            // Generate fake order ID
-            const orderId = `MASHAS-${Math.floor(100000 + Math.random() * 900000)}`
-            document.getElementById('order-id-display').textContent = `#${orderId}`
-            
-            // Hide checkout
-            hideCheckout()
-            
-            // Show thank you
-            setTimeout(() => {
-                const thankyouModal = document.getElementById('thankyou-modal')
-                thankyouModal.classList.remove('hidden')
-                
-                // Clear cart
-                cart = []
-                updateCartCount()
-                
-                // Simulate notification to owner
-                console.log('%c📧 ORDER NOTIFICATION SENT TO SANA & ASHRAF (owner@mashas.in)', 'color:#d4af77; font-weight:bold')
-                console.log(`Order ${orderId} received! Payment successful.`)
-                
-                // In real implementation this would call EmailJS or backend
-            }, 800)
-        }
-        
-        function hideThankYou() {
-            document.getElementById('thankyou-modal').classList.add('hidden')
-            // Optional: redirect to home
-            window.scrollTo({ top: 0, behavior: 'smooth' })
-        }
-        
-        function selectPayment(el) {
-            document.querySelectorAll('.payment-option').forEach(opt => opt.classList.remove('border-amber-400'))
-            el.classList.add('border-amber-400')
-        }
-        
-        // Sorting & filtering
-        function sortProducts() {
-            const value = document.getElementById('sort-select').value
-            let sorted = [...products]
-            
-            if (value === 'price-low') sorted.sort((a,b) => a.price - b.price)
-            else if (value === 'price-high') sorted.sort((a,b) => b.price - a.price)
-            else if (value === 'name') sorted.sort((a,b) => a.name.localeCompare(b.name))
-            
-            renderProducts(sorted)
-        }
-        
-        function filterByPrice() {
-            // Simple filter demo
-            const filtered = products.filter(p => p.price >= 3000 && p.price <= 8000)
-            renderProducts(filtered)
-        }
-        
-        // Mobile menu
-        function toggleMobileMenu() {
-            const menu = document.getElementById('mobile-menu')
-            menu.classList.toggle('hidden')
-        }
-        
-        function toggleSearch() {
-            alert("🔍 Search coming soon! (Full site would have live product search)")
-        }
-        
-        // Simple navigation
-        function navigateToSection(section) {
-            document.getElementById(section).scrollIntoView({ behavior: 'smooth' })
-            // Close mobile menu if open
-            const mobile = document.getElementById('mobile-menu')
-            if (!mobile.classList.contains('hidden')) mobile.classList.add('hidden')
-        }
-        
-        // Initialize everything
-        function init() {
-            initializeTailwind()
-            renderProducts(products)
-            updateCartCount()
-            
-            console.log('%c✅ MASHAS Luxury Abayas website loaded successfully!', 'color:#d4af77; font-size:16px; font-weight:bold')
-            console.log('👋 Hi Sana & Ashraf! Your site is ready. Replace placeholder images with your Logo.jpeg and Thank You card.jpeg')
-            console.log('Developer: Stark')
-        }
-        
-        // Start the site
-        window.onload = init
-    </script>
+    } catch(e) {
+        hideTyping()
+        addBotMsg("Sorry, I'm having connectivity issues. Please reach us on WhatsApp: +91 9696749507 💬")
+        showQuickReplies(["WhatsApp us now"])
+    }
+}
+
+// ════════════════════════════════════════════
+//  UTILS
+// ════════════════════════════════════════════
+function showToast(msg, type='info') {
+    const t = document.getElementById('toast')
+    t.textContent = msg
+    t.className = `toast ${type} show`
+    setTimeout(() => t.classList.remove('show'), 3000)
+}
+
+function toggleMobileMenu() {
+    document.getElementById('mobile-menu').classList.toggle('hidden')
+}
+
+function toggleSearch() {
+    const q = prompt('🔍 Search for an abaya (e.g. "black", "pastel", "nida"):')
+    if (!q) return
+    const results = products.filter(p => p.name.toLowerCase().includes(q.toLowerCase()) || p.fabric.toLowerCase().includes(q.toLowerCase()) || p.category.toLowerCase().includes(q.toLowerCase()))
+    renderProducts(results)
+    navigateToSection('shop')
+    showToast(results.length ? `${results.length} results for "${q}"` : `No results for "${q}"`, results.length ? 'info' : 'error')
+}
+
+function navigateToSection(id) {
+    document.getElementById(id)?.scrollIntoView({ behavior:'smooth' })
+    document.getElementById('mobile-menu')?.classList.add('hidden')
+}
+
+// ════════════════════════════════════════════
+//  INIT
+// ════════════════════════════════════════════
+window.onload = () => {
+    renderProducts(products)
+    updateCartCount()
+}
+</script>
 </body>
 </html>
