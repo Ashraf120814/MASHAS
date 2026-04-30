@@ -356,7 +356,7 @@
             <div class="mt-8 pt-6" style="border-top:1px solid var(--border)">
                 <p class="text-sm font-medium mb-3" style="color:var(--text)">📞 Reach Us Directly</p>
                 <div class="flex flex-col gap-2 text-sm" style="color:var(--text2)">
-                    <a href="tel:+919696749507" class="flex items-center gap-2"><i class="fa-solid fa-phone" style="color:var(--gold)"></i>+91 9696749507</a>
+                    <a href="tel:+919696479507" class="flex items-center gap-2"><i class="fa-solid fa-phone" style="color:var(--gold)"></i>+91 9696479507</a>
                     <a href="mailto:mashas@gmail.com" class="flex items-center gap-2"><i class="fa-solid fa-envelope" style="color:var(--gold)"></i>mashas@gmail.com</a>
                     <span class="flex items-center gap-2"><i class="fa-solid fa-location-dot" style="color:var(--gold)"></i>Lucknow, Uttar Pradesh</span>
                 </div>
@@ -397,7 +397,7 @@
                 <i class="fa-brands fa-facebook cursor-pointer" style="color:var(--text)"></i>
             </div>
             <p class="mt-8 text-xs" style="color:var(--text2)">Lucknow, Uttar Pradesh, India</p>
-            <p class="text-xs" style="color:var(--text2)">+91 9696749507 • mashas@gmail.com</p>
+            <p class="text-xs" style="color:var(--text2)">+91 9696479507 • mashas@gmail.com</p>
         </div>
     </div>
 </footer>
@@ -910,7 +910,7 @@ async function sendUserMessage(text) {
         })
         const data = await res.json()
         hideTyping()
-        const reply = data.content?.[0]?.text || "I'm having trouble connecting. Please WhatsApp us at +91 9696749507 😊"
+        const reply = data.content?.[0]?.text || "I'm having trouble connecting. Please WhatsApp us at +91 9696479507 😊"
         chatHistory.push({ role: 'assistant', content: reply })
         addBotMsg(reply)
 
@@ -927,7 +927,7 @@ async function sendUserMessage(text) {
         }
     } catch(e) {
         hideTyping()
-        addBotMsg("Sorry, I'm having connectivity issues. Please reach us on WhatsApp: +91 9696749507 💬")
+        addBotMsg("Sorry, I'm having connectivity issues. Please reach us on WhatsApp: +91 9696479507 💬")
         showQuickReplies(["WhatsApp us now"])
     }
 }
