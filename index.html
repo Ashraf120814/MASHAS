@@ -555,7 +555,7 @@
             <div class="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold" style="background:rgba(0,0,0,0.25)">AI</div>
             <div>
                 <div class="font-semibold text-sm">MASHAS Assistant</div>
-                <div class="text-xs opacity-80">🟢 Online • Powered by Claude AI</div>
+                <div class="text-xs opacity-80">🟢 Online • Powered by Mohammad AshrafI</div>
             </div>
         </div>
         <i onclick="toggleBot()" class="fa-solid fa-xmark cursor-pointer text-white"></i>
@@ -943,6 +943,14 @@ function getBotReply(text) {
         lastTopic = 'about'
         return { msg: KB.faqs.about, replies: ["Browse collection", "Contact Sana", "Our best sellers"] }
     }
+     if (/open whatsapp|whatsapp now|whatsapp us|message now|chat now|talk to sana|contact sana/.test(t)) {
+  window.open("https://wa.me/919696479507?text=Hi%20MASHAS!%20I%20need%20help%20with%20my%20order.", "_blank");
+
+  return {
+    msg: "Opening WhatsApp now! 💬 Sana & Ashraf will respond shortly.",
+    replies: ["Browse products", "View cart"]
+  };
+}
 
     // Contact / WhatsApp
     if (/contact|whatsapp|call|phone|number|email|reach|talk|speak/.test(t)) {
@@ -951,10 +959,7 @@ function getBotReply(text) {
     }
 
     // WhatsApp now action
-    if (/open whatsapp|whatsapp now|message now|chat now/.test(t)) {
-        window.open('https://wa.me/919696479507?text=Hi%20MASHAS!%20I%20need%20help%20with%20my%20order.', '_blank')
-        return { msg: "Opening WhatsApp now! 💬 Sana & Ashraf will respond shortly.", replies: ["Browse products", "View cart"] }
-    }
+  
 
     // Best sellers
     if (/best|popular|top|recommended|favourite|must/.test(t)) {
